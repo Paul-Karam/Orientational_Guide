@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <title>Result</title>
+</head>
+<body>
+    <canvas id="myChart"></canvas>
+    <button class="btn btn-outline-primary" id="btn">Result</button>
+    <h1 style="text-align:center" id="h1n1"></h1>
+    <p style="text-align:center" id="p1"></p>
+    <p style="text-align:center" id="p2"></p>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    const btn = document.getElementById('btn')
+    btn.addEventListener("click", click)
+    const p1 = document.getElementById('p1')
+    const p2 = document.getElementById('p2')
+    const h1 = document.getElementById('h1n1')
+    const ctx = document.getElementById('myChart')
+    let MaxResult = {}
+    window.addEventListener("load", load)
+    function click(){
+      h1.textContent = MaxResult.Title
+      p1.textContent = MaxResult.Text
+      p2.textContent = MaxResult.Majors
+    }
+    function load(){
+        GetData().then((result) => {
+           return result;
+        })
+        .then((result) => {
+          const Numbers = result.map((res) => parseInt(res.Answer))
+    const Personality = Math.max(...Numbers)
+    const MaxNumberIndex = Numbers.findIndex((Number) => Number === Personality)
+    MaxResult = TypeofPersonality[MaxNumberIndex]
+    console.log(MaxResult);
+            new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: result.map((result) => result.Verb),
+        datasets: [
+          {
+            label: 'Result',
+            data: result.map((result) => result.Answer),
+            borderWidth: 2,
+            backgroundColor: '#004065',
+            borderColor: '#004065',
+            fill: false,
+          },
+        ],
+      },
+      options: {
+        plugins: {
+          decimation: {
+            algorithm: 'min-max',
+          },
+          legend: {
+            position: 'top',
+            labels: {
+              font: {
+                size: 19,
+              },
+            },
+          },
+        },
+
+        responsive: true,
+        title: {
+          display: true,
+          text: "It work's",
+        },
+        animation: {
+          animateScale: true,
+          animateRotate: true,
+        },
+
+        scales: {
+          r: {
+            type: 'radialLinear',
+            pointLabels: {
+              color: '#004065',
+              font: {
+                size: 24,
+              },
+            },
+            min: 8,
+            max: 32,
+            ticks: {
+              stepSize: 10,
+              textStrokeColor: '#7298BE',
+              color: '#fff',
+              backdropColor: '#7298BE',
+            },
+            angleLines: {
+              color: '#346186',
+            },
+
+            grid: {
+              color: '#346186',
+            },
+          },
+        },
+      },
+    })
+        });
+    }
+    const GetData = async () => {
+    const url = new URL(window.location.href)
+    const id = url.searchParams.get("user_id")
+    const data = await fetch(`http://localhost/finalproject/Final_Project/includes/result.php?user_id=${id}`)
+    const JSON = await data.json()
+    console.log(JSON);
+    return JSON
+    }
+    const TypeofPersonality = [
+  {
+    Type: 'V1',
+    Title: 'Visionary',
+    Text:
+      'you are a person inspired innovators, motivated to find new solutions to intellectually challenging problems. You are curious and clever, and seek to comprehend the people, systems, and principles that surround them. Open-minded and unconventional, Visionary types want to analyze, understand, and influence other people.',
+    Majors:
+      'Consultant,entrepreneur,project manager, artist or creative director.',
+  },
+  {
+    Type: 'V2',
+    Title: 'Innovator',
+    Text:
+      'you are a person who can generate ideas that earn attention. By strategically applying their talent for creativity, quickly solve problems with fresh and inventive solutions.',
+    Majors:
+      'Teacher,Choreographer,Graphic designer,Fashion designer,Interior designer,Painter,Copywriter,Advertising manager.',
+  },
+  {
+    Type: 'V3',
+    Title: 'Communicator',
+    Text:
+      'The Communicator personality type is the consummate “people person.” They’re great at connecting with others and setting them at ease, and they value those working relationships. Ironically, this may actually rub some people the wrong way, but most people enjoy the warmth and enthusiasm that Communicators bring to the team.The Communicator personality type often goes along with creative energy and idea generation.',
+    Majors:
+      'Journalist,TV Presenter,Communications Executive,Marketing Manager,Counsellor,Doctor,Nurse,Lawyer',
+  },
+  {
+    Type: 'V4',
+    Title: 'Federator',
+    Text:
+      'A federator is a director of a company handles the day-to-day operations, including the business and financial operations of a company. Directors must ensure that business operations are carried out according to previously laid-down rules and regulations. They must be people that possess good integrity, honesty and are law abiding.',
+    Majors:
+      'Claims Adjuster Career,Underwriter Career,Business Analyst Career,Risk Manager Career,Safety Manager Career,Administrative Assistant Career,Sales Representative Career,Data Analyst Career.',
+  },
+
+  {
+    Type: 'V5',
+    Title: 'Organizer',
+    Text:
+      'People-oriented, analytical, pragmatic, and dynamic, you have a highly creative nature that’s balanced by a grounded realism and “get it done” attitude. In your eyes, an idea has real value only when it’s turned into something that others can enjoy and benefit from.',
+    Majors:
+      'Showrunner,Cinematographer,Screenwriter,Film director,Location manager,Set designer,Director of photography,Film editor.',
+  },
+  {
+    Type: 'V6',
+    Title: 'Producer',
+    Text:
+      'Organizers are outgoing, sociable types who have a special appreciation for a sense of community and comradeship. These types like to get involved in things that affect the groups they belong to – anything from organizing a trip or commemorative celebration to being the one to oversee the details of a project. They excel at coordinating and guiding other people’s efforts.',
+    Majors:
+      'Event planner,Wedding planner,Sponsorship manager,Account manager,Business development consultant,Training manager,Project manager,Human resource manager.',
+  },
+
+  {
+    Type: 'V7',
+    Title: 'Administrator',
+    Text:
+      'The average Administrator most likely feels comfortable with routine and predictability. Organized and attentive, they can be skilled at helping others make careful, thought-out decisions. When considering the risks of a potential decision, they may be able to offer useful input.',
+    Majors:
+      'Equity Analyst,Senior Administrative Assistant,Administrative Analyst,Business Administrator,Business Support Administrator,Corporate Administrator,Trust Administrative Assistant,Management Assistant.',
+  },
+
+  {
+    Type: 'V8',
+    Title: 'Analyst',
+    Text:
+      'Analysts are typically focused and analytical, but are also surprisingly creative. They are critical thinkers and very strategic in their approach. They are also logical observers and judges of what is going on.',
+    Majors:
+      'Medical and health care analyst,Market research analyst,Business analyst,Business intelligence analyst,Operations research analyst,Intelligence analyst.',
+  },
+]
+
+
+    </script>
+</body>
+</html>
